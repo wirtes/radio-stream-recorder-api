@@ -1,0 +1,47 @@
+Convert the following specification it into a verbose Spec prompt for the Kiro IDE: 
+
+
+I want to create an api in python that is hosted in Docker. This api will record radio streams in a variety of formats and convert them to MP3.
+
+The API code will then SCP the files to a remote directory.
+
+The API will use a JSON configuration file (called "config_shows.json") for each stream that is formatted like this:
+{
+	"super-sonido": { 	"show": "Super Sonido",
+						"station": "KUVO",
+						"artwork-file": "/home/pi/recordings/art/super-sonido.jpg",
+						"remote-directory": "alwirtes@plex-server.lan:/Volumes/External_12tb/Plex/Radio\\ Rips/",
+						"frequency": "weekly",
+						"playlist-db-slug": "Super Sonido"
+					},
+					
+Each object will be a radio stream that is to be recorded.
+
+The "show" element will be the name of the show. This will be used for the "Artist" and "Album Artist" metadata in the final MP3 file.
+
+The "artwork-file" element will be a path to artwork that will be used for the "Artwork" metadata element. The actual image should be stored in the MP3 metadata artwork.
+
+The Name of the resulting MP3 file will be in the format of "YYYY-MM-DD Show" where YYYY-MM-DD will be the current Year, Month and Day in the local timezone of the host machine. ALL TIMES WILL BE IN LOCAL HOST TIMEZONE. DO NOT USE UTC TIMES OR DATES AT ALL.
+
+The "frequency" element will be used to indicate if the show runs "daily" or "weekly". This is used to calculate the "Track #" metadata element of the final MP3 file. "daily" frequency shows should have a track number representing the number of days since the first day of the current year. "weekly" frequency shows should have a track number representing the number of weeks since the first day of the current year.
+
+The "Album" metadata tag in the resulting MP3 file will consist of the text in the "show" element with the four-digit year appended. In this example, the "Album" tag would be "Super Sonido 2025".
+
+The "remote-directory" element will be used to determine the location to SCP the final MP3 file. The "show" element will be appended as an subdirectory to the "remote-directory" value. Then the calculated "Album" value for the metatdata tag will be added as an additional subdirectory. The resulting MP3 file will be SCP'd to this directory
+
+The API will use a JSON configuration file (called "config_stations.json") to look up values "station" in a "config_shows.json" file. This is how the API will know the URL of radio stream to record. 
+
+This is an example of the "config_shows.json" file
+
+{
+	"KUVO": "http://kuvo-ice.streamguys.org/kuvo-aac-128",
+	"thedrop": "http://kuvo-ice.streamguys.org/kuvohd2-aac-128",
+	"coloradosound": "http://ais-sa1.streamon.fm/7891_96k.aac",
+	"radio1190": "http://kvcu.streamguys1.com/live"
+}
+
+The Docker container will mount local directories for configuration, working directories, and SSH private key to be used to SSH the final, converted MP3 file. Care will be taken to ensure proper permissions to the SSH private key provided.
+
+
+The running API will be invoked by an external post that contains the name of the show in "config_shows.json", in this example it is "super-sonido", and the total number of minutes to record. Recording should begin immediately. After recording for the specified amount of time, if the resulting file is not in MP3 format, it will be converted to MP3 format. Then the MP3 metadata will be added, including Album Artwork. This resulting MP3 file will be SCP'd to the location specified in the "config_shows.json" file for the show that was recorded.
+
