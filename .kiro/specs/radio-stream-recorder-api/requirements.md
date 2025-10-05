@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This feature involves developing a Python-based API hosted in a Docker container that records radio streams, converts them to MP3 format with rich metadata including artwork, and transfers the resulting files to a remote directory via SCP. The API will be triggered by external POST requests and will handle the entire workflow from stream recording to file transfer automatically.
+This feature involves developing a Python-based API that runs natively on the host system to record radio streams, converts them to MP3 format with rich metadata including artwork, and transfers the resulting files to a remote directory via SCP. The API will be triggered by external POST requests and will handle the entire workflow from stream recording to file transfer automatically.
 
 ## Requirements
 
@@ -54,15 +54,15 @@ This feature involves developing a Python-based API hosted in a Docker container
 
 ### Requirement 5
 
-**User Story:** As a system operator, I want the API to run in a Docker container with proper health checks, so that it can be deployed and monitored reliably.
+**User Story:** As a system operator, I want the API to run natively on the system with proper health checks, so that it can be deployed and monitored reliably.
 
 #### Acceptance Criteria
 
-1. WHEN the container starts THEN it SHALL expose the API on the configured port (default 8000)
+1. WHEN the application starts THEN it SHALL expose the API on the configured port (default 8000)
 2. WHEN health checks are performed THEN the system SHALL respond to /healthz endpoint
-3. WHEN the container runs THEN it SHALL use non-root user for security
-4. WHEN configuration is needed THEN the system SHALL read from mounted volumes for config files, work directory, and SSH keys
-5. WHEN timezone handling is required THEN the system SHALL use the container's local timezone, never UTC
+3. WHEN the application runs in production THEN it SHALL use non-root user for security
+4. WHEN configuration is needed THEN the system SHALL read from local directories for config files, work directory, and SSH keys
+5. WHEN timezone handling is required THEN the system SHALL use the host system's local timezone, never UTC
 
 ### Requirement 6
 

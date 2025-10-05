@@ -8,7 +8,7 @@ A Python-based API service that automates the recording, processing, and distrib
 - **Rich Metadata Processing**: Convert audio to MP3 with embedded artwork and ID3 tags
 - **Remote File Transfer**: Automatically transfer processed files via SCP to remote directories
 - **Concurrent Recording Support**: Handle multiple simultaneous recording requests
-- **Docker Containerized**: Fully containerized with health checks and monitoring
+- **Native Python Application**: Runs directly on your system with minimal dependencies
 - **Comprehensive Logging**: Structured logging with performance monitoring
 - **Configuration-Driven**: JSON-based configuration for shows and stations
 
@@ -16,11 +16,15 @@ A Python-based API service that automates the recording, processing, and distrib
 
 ### Prerequisites
 
-- Docker and Docker Compose
+- Python 3.11 or higher
+- ffmpeg (for audio recording and conversion)
+- openssh-client (for SCP transfers)
 - SSH key for remote file transfers
 - Radio stream URLs and artwork files
 
 ### Installation
+
+#### Automated Installation (Recommended)
 
 1. **Clone the repository**
    ```bash
@@ -28,7 +32,64 @@ A Python-based API service that automates the recording, processing, and distrib
    cd radio-stream-recorder-api
    ```
 
-2. **Create configuration files**
+2. **Run the installation script**
+   ```bash
+   ./install.sh
+   ```
+
+3. **Configure your shows and stations**
+   ```bash
+   # Edit configurations with your shows and stations
+   nano config/config_shows.json
+   nano config/config_stations.json
+   ```
+
+4. **Start the service**
+   ```bash
+   ./start.sh
+   
+   # Or for development with auto-reload:
+   ./start.sh --dev
+   ```
+
+5. **Verify the service is running**
+   ```bash
+   curl http://localhost:8000/healthz
+   ```
+
+#### Manual Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd radio-stream-recorder-api
+   ```
+
+2. **Install system dependencies**
+   ```bash
+   # Ubuntu/Debian
+   sudo apt-get update
+   sudo apt-get install ffmpeg openssh-client curl
+   
+   # macOS
+   brew install ffmpeg openssh curl
+   
+   # CentOS/RHEL/Fedora
+   sudo dnf install ffmpeg openssh-clients curl
+   ```
+
+3. **Create Python virtual environment**
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   ```
+
+4. **Install Python dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+5. **Create configuration files**
    ```bash
    # Copy example configurations
    cp config/config_shows.json.example config/config_shows.json
@@ -39,25 +100,27 @@ A Python-based API service that automates the recording, processing, and distrib
    nano config/config_stations.json
    ```
 
-3. **Set up SSH key for transfers**
+6. **Set up SSH key for transfers**
    ```bash
-   # Copy your SSH private key
-   mkdir -p ssh
-   cp ~/.ssh/id_rsa ssh/
-   chmod 600 ssh/id_rsa
+   # Ensure your SSH key has proper permissions
+   chmod 600 ~/.ssh/id_rsa
    ```
 
-4. **Create working directory**
+7. **Create working directory**
    ```bash
-   mkdir -p work
+   mkdir -p work/logs
    ```
 
-5. **Start the service**
+8. **Start the service**
    ```bash
-   docker-compose up -d
+   source .venv/bin/activate
+   python main.py
+   
+   # Or use the startup script:
+   ./start.sh
    ```
 
-6. **Verify the service is running**
+9. **Verify the service is running**
    ```bash
    curl http://localhost:8000/healthz
    ```
@@ -73,7 +136,7 @@ Configure your radio shows with metadata and transfer settings:
   "super-sonido": {
     "show": "Super Sonido",
     "station": "KUVO",
-    "artwork-file": "/config/artwork/super-sonido.jpg",
+    "artwork-file": "./config/artwork/super-sonido.jpg",
     "remote-directory": "user@server.lan:/path/to/radio/rips/",
     "frequency": "weekly",
     "playlist-db-slug": "Super Sonido"
@@ -81,7 +144,7 @@ Configure your radio shows with metadata and transfer settings:
   "morning-show": {
     "show": "Morning Show",
     "station": "LOCAL_FM",
-    "artwork-file": "/config/artwork/morning-show.jpg",
+    "artwork-file": "./config/artwork/morning-show.jpg",
     "remote-directory": "user@server.lan:/path/to/radio/rips/",
     "frequency": "daily",
     "playlist-db-slug": "Morning Show"
@@ -114,9 +177,9 @@ Define radio station stream URLs:
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `TZ` | `America/Denver` | Timezone for file naming and metadata |
-| `APP_CONFIG_DIR` | `/config` | Configuration files directory |
-| `APP_WORK_DIR` | `/work` | Working directory for temporary files |
-| `APP_SSH_KEY` | `/ssh/id_rsa` | SSH private key path |
+| `APP_CONFIG_DIR` | `./config` | Configuration files directory |
+| `APP_WORK_DIR` | `./work` | Working directory for temporary files |
+| `APP_SSH_KEY` | `~/.ssh/id_rsa` | SSH private key path |
 | `APP_PORT` | `8000` | API server port |
 | `LOG_LEVEL` | `INFO` | Logging level (DEBUG, INFO, WARNING, ERROR) |
 
@@ -217,69 +280,94 @@ curl http://localhost:8000/recovery
 5. **Remote Transfer**: Uploads via SCP to `remote-directory/show/Album/`
 6. **Cleanup**: Removes temporary files on successful transfer
 
-## Docker Deployment
+## Production Deployment
 
-### Using Docker Compose (Recommended)
+### Using systemd (Linux)
 
-```yaml
-version: '3.8'
+Create a systemd service file for automatic startup and management:
 
-services:
-  radio-recorder-api:
-    build: .
-    container_name: radio-recorder-api
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./config:/config:ro
-      - ./work:/work
-      - ./ssh:/ssh:ro
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
-    environment:
-      - TZ=America/Denver
-      - APP_CONFIG_DIR=/config
-      - APP_WORK_DIR=/work
-      - APP_SSH_KEY=/ssh/id_rsa
-      - APP_PORT=8000
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-```
+1. **Copy and customize the service file**
+   ```bash
+   # Copy the template
+   sudo cp radio-recorder-api.service /etc/systemd/system/
+   
+   # Edit the service file with your paths and user
+   sudo nano /etc/systemd/system/radio-recorder-api.service
+   ```
+   
+   Update the following fields in the service file:
+   - `User=your-username` → Your actual username
+   - `Group=your-group` → Your actual group
+   - `/path/to/radio-stream-recorder-api` → Full path to your installation
 
-### Using Docker Run
+3. **Enable and start service**
+   ```bash
+   sudo systemctl daemon-reload
+   sudo systemctl enable radio-recorder-api
+   sudo systemctl start radio-recorder-api
+   ```
 
-```bash
-docker build -t radio-recorder-api .
+4. **Check service status**
+   ```bash
+   sudo systemctl status radio-recorder-api
+   ```
 
-docker run -d \
-  --name radio-recorder-api \
-  -p 8000:8000 \
-  -v $(pwd)/config:/config:ro \
-  -v $(pwd)/work:/work \
-  -v $(pwd)/ssh:/ssh:ro \
-  -v /etc/localtime:/etc/localtime:ro \
-  -v /etc/timezone:/etc/timezone:ro \
-  -e TZ=America/Denver \
-  -e APP_CONFIG_DIR=/config \
-  -e APP_WORK_DIR=/work \
-  -e APP_SSH_KEY=/ssh/id_rsa \
-  radio-recorder-api
-```
+### Using Process Manager (PM2)
+
+For Node.js-style process management:
+
+1. **Install PM2**
+   ```bash
+   npm install -g pm2
+   ```
+
+2. **Create ecosystem file**
+   ```bash
+   nano ecosystem.config.js
+   ```
+   
+   ```javascript
+   module.exports = {
+     apps: [{
+       name: 'radio-recorder-api',
+       script: 'main.py',
+       interpreter: './.venv/bin/python',
+       cwd: '/path/to/radio-stream-recorder-api',
+       env: {
+         TZ: 'America/Denver',
+         APP_CONFIG_DIR: './config',
+         APP_WORK_DIR: './work',
+         APP_SSH_KEY: process.env.HOME + '/.ssh/id_rsa'
+       },
+       restart_delay: 10000,
+       max_restarts: 10
+     }]
+   }
+   ```
+
+3. **Start with PM2**
+   ```bash
+   pm2 start ecosystem.config.js
+   pm2 save
+   pm2 startup
+   ```
 
 ## Development Setup
 
 ### Local Development
 
-1. **Install Python dependencies**
+1. **Create virtual environment**
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
+
+2. **Install Python dependencies**
    ```bash
    pip install -r requirements.txt
    ```
 
-2. **Install system dependencies**
+3. **Install system dependencies**
    ```bash
    # Ubuntu/Debian
    sudo apt-get update
@@ -289,18 +377,39 @@ docker run -d \
    brew install ffmpeg openssh curl
    ```
 
-3. **Set up configuration**
+4. **Set up configuration**
    ```bash
    export APP_CONFIG_DIR=./config
    export APP_WORK_DIR=./work
-   export APP_SSH_KEY=./ssh/id_rsa
+   export APP_SSH_KEY=~/.ssh/id_rsa
    export TZ=America/Denver
    ```
 
-4. **Run the application**
+5. **Run the application**
    ```bash
    python main.py
    ```
+
+### Development with Auto-reload
+
+For development with automatic reloading on code changes:
+
+```bash
+# Using the startup script (recommended)
+./start.sh --dev
+
+# Or manually with uvicorn
+source .venv/bin/activate
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### Helper Scripts
+
+The project includes several helper scripts:
+
+- `install.sh` - Automated installation and setup
+- `start.sh` - Easy application startup with environment configuration
+- `radio-recorder-api.service` - systemd service template for production
 
 ### Running Tests
 
@@ -329,7 +438,7 @@ pytest tests/ -v
 **Transfer Failures**
 - Verify SSH key has access to remote server
 - Check remote directory permissions
-- Ensure SCP is available in container
+- Ensure SCP is available on the system
 
 **Performance Issues**
 - Monitor disk space in work directory
@@ -345,14 +454,14 @@ Logs are structured and include:
 - Recording workflow progress
 
 ```bash
-# View logs
-docker logs radio-recorder-api
+# View application logs
+tail -f work/logs/app.log
 
-# Follow logs in real-time
-docker logs -f radio-recorder-api
+# View structured logs
+tail -f work/logs/structured.log
 
 # View logs with timestamps
-docker logs -t radio-recorder-api
+journalctl -u radio-recorder-api -f  # If using systemd
 ```
 
 ### Health Monitoring
@@ -368,8 +477,8 @@ The service provides multiple monitoring endpoints:
 
 - SSH keys should have restricted permissions (600)
 - Configure CORS and trusted hosts for production
-- Use non-root user in container (UID 10001)
-- Mount configuration files as read-only
+- Run service as non-root user in production
+- Set configuration files as read-only in production
 - Validate all input parameters
 - Implement rate limiting for production use
 

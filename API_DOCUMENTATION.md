@@ -435,11 +435,12 @@ Applied ID3 tags include:
 - Use trusted host middleware
 - Consider implementing authentication for production use
 
-### Container Security
+### Application Security
 
-- Service runs as non-root user (UID 10001)
-- Configuration files mounted read-only
-- Minimal container image with only required dependencies
+- Run service as non-root user in production
+- Set proper file permissions on configuration files
+- Secure SSH key permissions (600)
+- Use virtual environment for Python dependencies
 
 ## Monitoring and Logging
 
@@ -537,7 +538,7 @@ result = record_show("super-sonido", 60)
 - Basic recording functionality
 - Metadata processing
 - SCP file transfer
-- Docker containerization
+- Native Python deployment
 - Health monitoring
 
 ## Support and Maintenance
@@ -561,7 +562,7 @@ Regularly backup:
 ### Updates and Maintenance
 
 - Monitor for security updates
-- Update base Docker images regularly
+- Update Python dependencies regularly
 - Review and rotate SSH keys
 - Clean up old log files
 - Monitor disk space usage

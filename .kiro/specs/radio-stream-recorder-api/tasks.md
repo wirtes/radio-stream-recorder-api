@@ -118,21 +118,21 @@
     - Test concurrent request handling and file conflict prevention
     - _Requirements: 7.1, 7.2, 7.3, 7.4_
 
-- [x] 8. Create Docker container configuration
-  - [x] 8.1 Create Dockerfile with proper security configuration
-    - Set up non-root user execution (UID 10001)
-    - Configure volume mounts for config, work directory, and SSH keys
+- [x] 8. Create native deployment configuration
+  - [x] 8.1 Create installation script with proper security configuration
+    - Set up Python virtual environment and dependencies
+    - Configure proper directory structure and permissions
     - Set up timezone handling and environment variables
     - _Requirements: 5.3, 5.4, 5.5_
   
-  - [x] 8.2 Add Docker health check configuration
+  - [x] 8.2 Add application health check configuration
     - Configure health check using /healthz endpoint
-    - Set appropriate intervals, timeouts, and retry counts
+    - Set appropriate monitoring intervals and checks
     - _Requirements: 5.2_
   
-  - [x] 8.3 Create docker-compose.yml for development
-    - Set up volume mounts and environment variables
-    - Configure port mapping and network settings
+  - [x] 8.3 Create systemd service configuration for production
+    - Set up service configuration with proper user and security settings
+    - Configure environment variables and restart policies
     - _Requirements: 5.1, 5.4_
 
 - [x] 9. Add logging and monitoring
@@ -166,8 +166,8 @@
     - Document all configuration options and their purposes
     - _Requirements: 2.1, 2.2_
   
-  - [x] 11.2 Test complete Docker deployment
-    - Build and test Docker container with all dependencies
-    - Verify volume mounts and environment variable handling
-    - Test health checks and container lifecycle
+  - [x] 11.2 Test complete native deployment
+    - Test installation script with all dependencies
+    - Verify directory structure and environment variable handling
+    - Test health checks and application lifecycle
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_

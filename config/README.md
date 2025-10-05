@@ -34,8 +34,8 @@ Defines radio shows with their metadata and transfer settings. Each show is iden
 **`artwork-file`**
 - Path to image file (JPG, PNG supported)
 - Image will be embedded in MP3 files
-- Path must be accessible from within Docker container
-- Recommended: Place in `/config/artwork/` directory
+- Path must be accessible from the application
+- Recommended: Place in `./config/artwork/` directory
 
 **`remote-directory`**
 - SCP format: `user@hostname:/path/to/directory/`
@@ -60,7 +60,7 @@ Defines radio shows with their metadata and transfer settings. Each show is iden
   "my-show": {
     "show": "My Radio Show",
     "station": "LOCAL_FM",
-    "artwork-file": "/config/artwork/my-show.jpg",
+    "artwork-file": "./config/artwork/my-show.jpg",
     "remote-directory": "user@server.lan:/media/radio/",
     "frequency": "weekly",
     "playlist-db-slug": "My Radio Show"
@@ -101,7 +101,7 @@ Maps station keys to their stream URLs.
 
 Format: `YYYY-MM-DD Show.mp3`
 
-- Uses local timezone (configured via Docker environment)
+- Uses local timezone (configured via environment variables)
 - Example: `2024-03-15 Super Sonido.mp3`
 
 ### MP3 Metadata Tags
@@ -137,14 +137,20 @@ Example: `user@server:/media/radio/Super Sonido/Super Sonido 2024/2024-03-15 Sup
 - Stream must be accessible and compatible with ffmpeg
 - No duplicate station keys allowed
 
-## Docker Volume Mapping
+## Directory Structure
 
-When running in Docker, map configuration files as read-only volumes:
+Organize configuration files in the project directory:
 
-```yaml
-volumes:
-  - ./config:/config:ro
-  - ./artwork:/config/artwork:ro
+```
+project-root/
+├─ config/
+│  ├─ config_shows.json
+│  ├─ config_stations.json
+│  └─ artwork/
+│     ├─ show1.jpg
+│     └─ show2.jpg
+└─ work/
+   └─ logs/
 ```
 
 ## Troubleshooting
@@ -165,10 +171,10 @@ Use the API health check to verify configuration loading:
 curl http://localhost:8000/healthz
 ```
 
-Check Docker logs for configuration validation errors:
+Check application logs for configuration validation errors:
 
 ```bash
-docker logs radio-recorder
+tail -f work/logs/app.log
 ```
 
 ## Security Considerations

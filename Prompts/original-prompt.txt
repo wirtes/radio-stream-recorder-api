@@ -1,7 +1,7 @@
 Convert the following specification it into a verbose Spec prompt for the Kiro IDE: 
 
 
-I want to create an api in python that is hosted in Docker. This api will record radio streams in a variety of formats and convert them to MP3.
+I want to create an api in python that runs natively on the host system. This api will record radio streams in a variety of formats and convert them to MP3.
 
 The API code will then SCP the files to a remote directory.
 
@@ -40,7 +40,7 @@ This is an example of the "config_shows.json" file
 	"radio1190": "http://kvcu.streamguys1.com/live"
 }
 
-The Docker container will mount local directories for configuration, working directories, and SSH private key to be used to SSH the final, converted MP3 file. Care will be taken to ensure proper permissions to the SSH private key provided.
+The application will use local directories for configuration, working directories, and SSH private key to be used to SCP the final, converted MP3 file. Care will be taken to ensure proper permissions to the SSH private key provided.
 
 
 The running API will be invoked by an external post that contains the name of the show in "config_shows.json", in this example it is "super-sonido", and the total number of minutes to record. Recording should begin immediately. After recording for the specified amount of time, if the resulting file is not in MP3 format, it will be converted to MP3 format. Then the MP3 metadata will be added, including Album Artwork. This resulting MP3 file will be SCP'd to the location specified in the "config_shows.json" file for the show that was recorded.

@@ -1,0 +1,35 @@
+[Unit]
+Description=Radio Stream Recorder API
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=your-username
+Group=your-group
+WorkingDirectory=/path/to/radio-stream-recorder-api
+Environment=PATH=/path/to/radio-stream-recorder-api/.venv/bin
+Environment=PYTHONPATH=/path/to/radio-stream-recorder-api
+Environment=TZ=America/Denver
+Environment=APP_CONFIG_DIR=./config
+Environment=APP_WORK_DIR=./work
+Environment=APP_SSH_KEY=/home/your-username/.ssh/id_rsa
+Environment=APP_PORT=8000
+Environment=LOG_LEVEL=INFO
+ExecStart=/path/to/radio-stream-recorder-api/.venv/bin/python main.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=radio-recorder-api
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/path/to/radio-stream-recorder-api/work
+ReadOnlyPaths=/path/to/radio-stream-recorder-api/config
+
+[Install]
+WantedBy=multi-user.target

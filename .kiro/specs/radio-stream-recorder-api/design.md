@@ -32,13 +32,13 @@ graph TB
     FileTransfer --> RemoteStorage[Remote Directory]
 ```
 
-### Container Architecture
+### Application Architecture
 
-The application runs in a Docker container with the following mounted volumes:
-- `/config` - Configuration files (read-only)
-- `/work` - Temporary working directory for recordings
-- `/ssh` - SSH private key for SCP authentication (read-only)
-- `/etc/localtime` and `/etc/timezone` - Host timezone information
+The application runs natively on the host system with the following directory structure:
+- `./config` - Configuration files
+- `./work` - Temporary working directory for recordings
+- `~/.ssh/id_rsa` - SSH private key for SCP authentication
+- System timezone configuration used directly
 
 ## Components and Interfaces
 
@@ -246,7 +246,7 @@ class HealthResponse(BaseModel):
 - End-to-end recording workflow with test streams
 - Configuration file parsing with various scenarios
 - SCP transfer with test remote directories
-- Docker container health checks and startup
+- Application health checks and startup
 
 ### Performance Testing
 - Concurrent recording request handling
@@ -257,12 +257,12 @@ class HealthResponse(BaseModel):
 ### Security Testing
 - SSH key permission validation
 - Input sanitization for show parameters
-- Container security scanning
+- Application security scanning
 - File system access restrictions
 
 ## Deployment Configuration
 
-### Docker Configuration
+### Application Configuration
 
 **Environment Variables:**
 - `TZ`: Timezone (default: America/Denver)
@@ -287,7 +287,7 @@ class HealthResponse(BaseModel):
 - Non-root user execution (UID 10001)
 - SSH key with restricted permissions (600)
 - Read-only configuration mounts
-- Network isolation through Docker networking
+- Network security through system firewall configuration
 - Input validation and sanitization
 - Secure temporary file handling with unique identifiers
 

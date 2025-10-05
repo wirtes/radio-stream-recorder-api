@@ -22,7 +22,7 @@ from src.utils.logging_config import (
 # Initialize structured logging
 setup_logging(
     log_level=os.getenv("LOG_LEVEL", "INFO"),
-    log_dir=os.getenv("APP_LOG_DIR", "/work/logs"),
+    log_dir=os.getenv("APP_LOG_DIR", "./work/logs"),
     enable_console=True,
     enable_file=True,
     enable_structured=True
@@ -32,9 +32,9 @@ logger = logging.getLogger(__name__)
 
 # Initialize application configuration
 app_config = AppConfig(
-    config_dir=os.getenv("APP_CONFIG_DIR", "/config"),
-    work_dir=os.getenv("APP_WORK_DIR", "/work"),
-    ssh_key_path=os.getenv("APP_SSH_KEY", "/ssh/id_rsa"),
+    config_dir=os.getenv("APP_CONFIG_DIR", "./config"),
+    work_dir=os.getenv("APP_WORK_DIR", "./work"),
+    ssh_key_path=os.getenv("APP_SSH_KEY", os.path.expanduser("~/.ssh/id_rsa")),
     port=int(os.getenv("APP_PORT", "8000")),
     timezone=os.getenv("TZ", "America/Denver")
 )
@@ -290,7 +290,7 @@ async def record_stream(request: RecordRequest) -> RecordResponse:
 # Health check endpoint
 @app.get("/healthz", response_model=HealthResponse)
 async def health_check() -> HealthResponse:
-    """Health check endpoint for container monitoring.
+    """Health check endpoint for service monitoring.
     
     Performs comprehensive health checks including:
     - Configuration loading status
