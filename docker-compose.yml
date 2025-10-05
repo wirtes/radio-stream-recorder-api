@@ -1,0 +1,35 @@
+services:
+  radio-recorder-api:
+    build: .
+    container_name: radio-recorder-api
+    ports:
+      - "8000:8000"
+    volumes:
+      # Configuration files (read-only)
+      - ./config:/config:ro
+      # Working directory for temporary files
+      - ./work:/work
+      # SSH private key for SCP transfers (read-only)
+      - ./ssh:/ssh:ro
+      # Host timezone information
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      - TZ=America/Denver
+      - APP_CONFIG_DIR=/config
+      - APP_WORK_DIR=/work
+      - APP_SSH_KEY=/ssh/id_rsa
+      - APP_PORT=8000
+    networks:
+      - radio-recorder-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+networks:
+  radio-recorder-network:
+    driver: bridge

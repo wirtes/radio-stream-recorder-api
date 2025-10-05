@@ -1,0 +1,2 @@
+# This is a placeholder for test artwork
+# In production, replace with actual JPG/PNG files

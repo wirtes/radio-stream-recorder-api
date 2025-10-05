@@ -1,0 +1,22 @@
+{
+  "_comment": "Radio Station Configuration - Maps station keys to stream URLs",
+  "_documentation": {
+    "station_key": "Unique identifier referenced by shows in config_shows.json",
+    "stream_url": "Direct HTTP/HTTPS URL to the radio stream (MP3, AAC, etc.)"
+  },
+  "_notes": [
+    "URLs must start with http:// or https://",
+    "Stream formats supported: MP3, AAC, OGG, FLAC (via ffmpeg)",
+    "Test stream URLs before adding to ensure they work with ffmpeg",
+    "Some streams may require user-agent headers (handle via ffmpeg options)"
+  ],
+  
+  "KUVO": "http://kuvo-ice.streamguys.org/kuvo-aac-128",
+  "CLASSICAL_FM": "https://classical-stream.example.com/live.mp3",
+  "LOCAL_AM": "http://local-radio.com:8000/stream",
+  "INDIE_STREAM": "https://indie-radio.net/stream.aac",
+  "JAZZ_24_7": "http://jazz247.streamguys1.com/live",
+  "NEWS_RADIO": "https://news-stream.radio.com/live.mp3",
+  "WORLD_MUSIC": "http://worldmusic.example.org:8080/stream.ogg",
+  "ELECTRONIC_BEATS": "https://electronic.radio-stream.net/high-quality.aac"
+}

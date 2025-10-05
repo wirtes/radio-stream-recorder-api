@@ -1,0 +1,19 @@
+{
+  "super-sonido": {
+    "show": "Super Sonido",
+    "station": "KUVO",
+    "artwork-file": "/config/artwork/super-sonido.jpg",
+    "remote-directory": "user@plex-server.lan:/Volumes/Media/Radio Rips/",
+    "frequency": "weekly",
+    "playlist-db-slug": "Super Sonido"
+  },
+  
+  "morning-jazz": {
+    "show": "Morning Jazz",
+    "station": "KUVO",
+    "artwork-file": "/config/artwork/morning-jazz.jpg",
+    "remote-directory": "user@nas.local:/media/radio/",
+    "frequency": "daily",
+    "playlist-db-slug": "Morning Jazz"
+  }
+}

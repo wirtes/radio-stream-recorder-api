@@ -1,0 +1,56 @@
+{
+  "_comment": "Radio Show Configuration - Each key represents a unique show identifier",
+  "_documentation": {
+    "show": "Display name for the radio show (used in metadata tags)",
+    "station": "Station key that references an entry in config_stations.json",
+    "artwork-file": "Absolute path to artwork image file (JPG/PNG) to embed in MP3",
+    "remote-directory": "SCP destination in format 'user@host:/path/' or local path",
+    "frequency": "Recording frequency - 'daily' or 'weekly' (affects track numbering)",
+    "playlist-db-slug": "Database identifier for playlist management"
+  },
+  
+  "super-sonido": {
+    "show": "Super Sonido",
+    "station": "KUVO",
+    "artwork-file": "/config/artwork/super-sonido.jpg",
+    "remote-directory": "user@plex-server.lan:/Volumes/Media/Radio Rips/",
+    "frequency": "weekly",
+    "playlist-db-slug": "Super Sonido"
+  },
+  
+  "morning-jazz": {
+    "show": "Morning Jazz",
+    "station": "KUVO",
+    "artwork-file": "/config/artwork/morning-jazz.jpg",
+    "remote-directory": "user@nas.local:/media/radio/",
+    "frequency": "daily",
+    "playlist-db-slug": "Morning Jazz"
+  },
+  
+  "weekend-classics": {
+    "show": "Weekend Classics",
+    "station": "CLASSICAL_FM",
+    "artwork-file": "/config/artwork/weekend-classics.png",
+    "remote-directory": "radiouser@backup-server:/home/radiouser/recordings/",
+    "frequency": "weekly",
+    "playlist-db-slug": "Weekend Classics"
+  },
+  
+  "local-news": {
+    "show": "Local News Hour",
+    "station": "LOCAL_AM",
+    "artwork-file": "/config/artwork/news-default.jpg",
+    "remote-directory": "/local/storage/radio-archive/",
+    "frequency": "daily",
+    "playlist-db-slug": "Local News"
+  },
+  
+  "indie-spotlight": {
+    "show": "Indie Music Spotlight",
+    "station": "INDIE_STREAM",
+    "artwork-file": "/config/artwork/indie-spotlight.jpg",
+    "remote-directory": "dj@radio-station.org:/var/www/archives/",
+    "frequency": "weekly",
+    "playlist-db-slug": "Indie Spotlight"
+  }
+}
